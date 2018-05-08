@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
 #define true 1
 #define false 0
@@ -57,9 +58,10 @@ void print(char* path) {
 
 		if (direntPtr->d_type != DT_DIR) { printf("%s%s\n", RED, direntPtr->d_name); }
 		
-		else if(direntPtr->d_type == DT_DIR && strcmp(direntPtr->d_name, ".") != 0 && strcmp(direntPtr->d_name, "..") != 0) {
+		else if(direntPtr->d_type == DT_DIR && direntPtr->d_name[0] != '.'
+			&& strcmp(direntPtr->d_name, ".") != 0 && strcmp(direntPtr->d_name, "..") != 0) {
 
-			printf("\nDirectory: %s%s\n", BLUE, direntPtr->d_name);			
+			printf("%s\n", direntPtr->d_name);			
 
 			sprintf(dpathArr, "%s/%s", path, direntPtr->d_name); 
 				 
@@ -74,10 +76,14 @@ void print(char* path) {
 	closedir(dirPtr);
 } 
 
-bool pathIsRelative(char* target) {
-	struct dirent *direntPtr;
+bool isFile(const char* target) {
+	struct stat statbuf;
+	stat(target, &statbuf);
+	return S_ISREG(statbuf.st_mode);
+}
 
-	if(target[0] == '/') { return false; }
+bool pathIsRelative(char* target) {
+	if(target[0] == '/' || isFile(target)) { return false; }
 
 	return true;
 }
