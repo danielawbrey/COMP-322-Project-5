@@ -61,7 +61,7 @@ void print(char* path) {
 		else if(direntPtr->d_type == DT_DIR && direntPtr->d_name[0] != '.'
 			&& strcmp(direntPtr->d_name, ".") != 0 && strcmp(direntPtr->d_name, "..") != 0) {
 
-			printf("%s\n", direntPtr->d_name);			
+			printf("\nDirectory: %s%s\n", BLUE, direntPtr->d_name);			
 
 			sprintf(dpathArr, "%s/%s", path, direntPtr->d_name); 
 				 
